@@ -1,23 +1,23 @@
 #!/bin/bash
-#Script para gerar os dumps no diretório DIR
-#O nome dos diretórios ficará da forma NomedainstanciaDATA
+#This script will generate dump files on $DIR directory
+#The directory names follows the pattern DBNameDATE(ymd)
 
-DATE=`date +%Y%m%d`     # Dia em que o script rodou
+DATE=`date +%Y%m%d`     # Date
 
-DIR="/home/user/pg_bkp"     #Volume em qual os dumps ficarão armazenados
+DIR="/home/user/pg_bkp"     #Directory where the dumps will be retained
 
-if [ -d "$DIR" ]; then      #Confere se o diretório existe, caso não exista ele cria o diretório
-  echo "O diretório existe, iniciando dump"
+if [ -d "$DIR" ]; then      #Check if the DIR exists, case it don't a new directory will be created
+  echo "The directory exists, initiating dump"
 else 
-  echo "Diretório não encontrado"
-  echo "Criando diretório"
+  echo "Dirctory not found"
+  echo "Creating directory"
   mkdir /home/user/pg_bkp
 fi
 
-while read INSTANCE; do     #Lê as linhas do arquivo de texto com os nomes das instancias e armazena o dump
+while read INSTANCE; do     #Read lines from examples.txt file and create new directories for each DB 
     echo $INSTANCE
     mkdir /home/user/pg_bkp/$INSTANCE$DATE
     pg_dump -Fc $INSTANCE > /home/user/pg_bkp/$INSTANCE$DATE
 done < examples.txt
 
-find /home/user/pg_bkp -type d -mtime +10 -delete #Encontra a pasta que contêm os dumps mais velhos do que 10 dias e os retira
+find /home/user/pg_bkp -type d -mtime +10 -delete #Prune dumps older than 10 days
